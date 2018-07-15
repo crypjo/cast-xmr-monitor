@@ -1,0 +1,337 @@
+<!-- 
+	Copyright 2018 Crypjo
+
+	This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<meta charset="UTF-8"/>
+<html>
+  <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+
+</style>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+	
+	/* if the user clicks anywhere outside the select box, then close all select boxes: */
+	function setChartInterval(selector) {
+		var index = selector.selectedIndex;
+		switch(index){
+	      case 0:
+		     chartInterval = 5000
+		     break;
+	      case 1:
+		     chartInterval = 10000
+		     break;
+	      case 2:
+		     chartInterval = 30000
+		     break;
+	      case 3:
+		     chartInterval = 60000
+		     break;
+	      case 4:
+		     chartInterval = 600000
+		     break;
+	      case 5:
+		     chartInterval = 900000
+		     break;
+	      case 6:
+		     chartInterval = 1800000
+		     break;
+	      case 7:
+		     chartInterval = 3600000
+		     break;
+	   }
+	   clearInterval(interval);
+	   interval = setInterval(updateCharts, chartInterval);
+	}
+	/**
+		<option value="0">10</option>
+		<option value="1">50</option>
+		<option value="2">100</option>
+		<option value="3">200</option>
+	*/
+	function setNumPoints(selector) {
+		var index = selector.selectedIndex;
+
+	   switch(index){
+	      case 0:
+ 			numPoints = 10;
+		    break;
+	      case 1:
+ 			numPoints = 50;
+		    break;
+	      case 2:
+ 			numPoints = 100;
+		    break;
+	      case 3:
+ 			numPoints = 200;
+		    break;
+		}
+		
+	}
+		
+		google.charts.load("current", {packages: ["line"]});
+		google.charts.setOnLoadCallback(startChartInterval);
+				
+		var params = location.search.substr(location.search.indexOf("?")+1);
+		var urls = new Array();
+		var sname = "miner";
+		var numPoints = 10;
+		var minInterval = 5000;
+		var chartInterval = 5000;
+		params = params.split("&");
+		// split param and value into individual pieces
+		for (var i=0; i<params.length; i++) {
+			param = params[i].split("=");
+			if ( [param[0]] == sname ) { 
+				urls.push(param[1]); 
+			}
+			if ( [param[0]] == 'interval' ) { 
+			     chartInterval = param[1];
+			}
+			if ( [param[0]] == 'points' ) { 
+			     numPoints = param[1];
+			}
+		}
+		
+		if(urls.length < 1) {
+			alert("Provide miner IPs for data retrieval using '?miner=192.168.1.102&miner=192.168.1.114'")
+		}
+		var dataTables;
+		
+		var interval;
+		var metrics = ["Hashrate", "Temperature", "Fan speed"];
+		/**
+		 * Chart for each metric
+		 * Series for each GPU
+		 * Rows for each time step
+		 */
+		function startChartInterval() {		
+			dataTables = new Array();
+			for(var s = 0; s < urls.length; s++) {
+				var serverTables = new Array();
+				for(var i = 0; i < metrics.length; i++) {
+					var dataTable = new google.visualization.DataTable();
+					dataTable.addColumn('timeofday', 'Time');
+					serverTables.push(dataTable);
+				}
+				dataTables.push(serverTables);
+			}
+			initChartTable();			
+			interval = setInterval(updateCharts, chartInterval);
+	    }		 
+
+		function initChartTable(){
+		    for(var i = 0; i < urls.length; i++){
+				addTableRow(i, urls[i]);
+			}
+		}
+		
+		function updateCharts(){
+		    for(var i = 0; i < urls.length; i++){
+				updateChart(i);
+			}
+		}
+		
+		function updateChart(index){
+			var url = 'http://' +  urls[index] + ':7777/';
+			var jsonData = getJSON(url, index, errorData);
+		}
+
+		var getJSON = function(url, index, callback) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			xhr.responseType = 'json';
+			xhr.onload = function() {
+			  var status = xhr.status;
+			  if (status === 200) {
+				callback(null, index, xhr.response);
+			  } else {
+				callback(status, index, xhr.response);
+			  }
+			};
+			xhr.send();
+		};	
+		
+		function errorData(err, index, data) {
+		  if (err !== null) {
+			alert('HTTP request failed: ' + err);
+		  } else {
+			convertData(index, data);
+		  }
+		}
+		   		   
+	   function convertData(index, jsonData) {	
+		// add columns: Type      Label
+		for(var m = 0; m < metrics.length; m++) {		
+		    dataTable = dataTables[index][m];
+			// add each row from json
+			jsonData.devices.forEach(function (row) {
+			    if(dataTable.getNumberOfColumns() <= jsonData.devices.length) {
+				    dataTable.addColumn('number', row.device);
+			    }
+			});
+			
+			var date = new Date();
+			
+			var valueArray = new Array();
+			var time = new Array();
+			time.push(date.getHours() + (date.getTimezoneOffset() / 60));
+			time.push(date.getMinutes());
+			time.push(date.getSeconds());
+			valueArray.push(time);
+
+			jsonData.devices.forEach(function (row) {
+			  var val;
+			  switch( m ){
+			     case 0:
+					val = row.hash_rate;
+					break;
+			     case 1:
+					val = row.gpu_temperature;
+					break;
+			     case 2:
+					val = row.gpu_fan_rpm;
+					break;
+				}
+				valueArray.push(val);
+			});
+			
+			dataTable.addRow(valueArray);
+			trimHead(dataTable, numPoints);
+			
+			dataTable.sort([{column: 0}]);
+			
+			var w = window.innerWidth / 3 - 50;
+			var h = window.innerHeight / urls.length - 10;
+			var options = {
+			  chart: {
+				title: metrics[m]
+			  },
+			  bars: 'vertical',
+			  width: w,
+			  height: h,
+              chartArea: {left:10,top:10,'width': '90%', 'height': '80%'}
+			};
+			
+			var table 	 = document.getElementById("MinerStats")			
+			var row 	 = table.rows[index];			
+			var cells    = row.getElementsByTagName("td");
+			var dataText = cells[m+1].getElementsByTagName("div")[0]; 
+
+      		var chart = new google.charts.Line(dataText);
+			
+			chart.draw(dataTable, google.charts.Line.convertOptions(options));
+		}
+	  }
+
+      function trimTail(dataTable, fixedSize){
+            // Check to see if any trimming needs to be performed.
+			var numRows = dataTable.getNumberOfRows();
+            if (numRows <= fixedSize){
+                // No trimming, return out.
+                return;
+            }
+            // Trim whatever is beyond the fixed size.
+            dataTable.removeRows(fixedSize, (numRows - fixedSize));
+        };
+
+      function trimHead(dataTable, fixedSize){
+            // Check to see if any trimming needs to be performed.
+			var numRows = dataTable.getNumberOfRows();
+            if (numRows <= fixedSize){
+                // No trimming, return out.
+                return;
+            }
+            // Trim whatever is beyond the fixed size.
+            dataTable.removeRows(0, (numRows - fixedSize));
+        };
+		
+	  function addTableRow(rowindex, name){
+		var table = document.getElementById("MinerStats");
+		var row = table.insertRow(rowindex);
+		var cell0 = row.insertCell(0);
+		var cell1 = row.insertCell(1);
+		var cell2 = row.insertCell(2);
+		var cell3 = row.insertCell(3);
+		cell0.innerHTML = "<td>" + name + "</td>";
+		cell1.innerHTML = "<td><div className=\"Hashrate\"    style=\"border: 1px solid #ccc\"></div></td>";
+		cell2.innerHTML = "<td><div className=\"Temperature\" style=\"border: 1px solid #ccc\"></div></td>";
+		cell3.innerHTML = "<td><div className=\"Fan speed\"	  style=\"border: 1px solid #ccc\"></div></td>";
+	  }
+		
+	/* When the user clicks on the button, 
+	toggle between hiding and showing the dropdown content */
+	function showIntervalSelection() {
+		var elem = document.getElementById("intervalDropdown");
+		elem.classList.toggle("show");
+		elem.selectedIndex = 2;
+	}
+		
+	// Close the dropdown menu if the user clicks outside of it
+	window.onclick = function(event) {
+	  if (!event.target.matches('.dropbtn')) {
+
+		var dropdowns = document.getElementsByClassName("dropdown-content");
+		var i;
+		for (i = 0; i < dropdowns.length; i++) {
+		  var openDropdown = dropdowns[i];
+		  if (openDropdown.classList.contains('show')) {
+			openDropdown.classList.remove('show');
+		  }
+		}
+	  }
+	}		
+
+</script>
+  </head>
+  <body>	
+	<div class="navbar">	
+		<table id="Options" class="columns">
+			<tr>
+				<td><label>Chart refresh interval</label></td>
+				<td><div id="interval-select" style="width:200px;">
+					  <select onchange="setChartInterval(this);">
+						<option value="0">5 sec</option>
+						<option value="1">10 sec</option>
+						<option value="2">30 sec</option>
+						<option value="3">1 min</option>
+						<option value="4">10 min</option>
+						<option value="5">15 min</option>
+						<option value="6">30 min</option>
+						<option value="7">1 hour</option>
+					  </select>
+					
+				</div></td>
+				<td><label>Num chart points</label></td>
+				<td><div id="points-select" style="width:200px;">
+					  <select onchange="setNumPoints(this);">
+						<option value="0">10</option>
+						<option value="1">50</option>
+						<option value="2">100</option>
+						<option value="3">200</option>
+					  </select>
+					
+				</div></td>	
+			</tr>
+		</table>
+	</div>	
+    <table id="MinerStats" class="columns">
+    </table>
+	<div style="text-align:center">Cast XMR Monitor &nbsp;&nbsp; Copyright 2018 Crypjo</div>
+  </body>	
+ </html>
