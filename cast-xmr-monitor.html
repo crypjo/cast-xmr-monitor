@@ -17,9 +17,10 @@
 <meta charset="UTF-8"/>
 <html>
   <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-deep-purple.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-dark-grey.css">
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -320,6 +321,11 @@
 
 	function setTheme(selector) {
 		theme = selector[selector.selectedIndex].innerHTML;
+		if(theme == 'Dark'){	
+			document.getElementsByTagName("BODY")[0].className = "w3-theme-d5";
+		} else {
+			document.getElementsByTagName("BODY")[0].className = "w3-theme-l4";
+		}
 	}
 
 </script>
