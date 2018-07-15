@@ -200,7 +200,7 @@
 			
 			dataTable.sort([{column: 0}]);
 			
-			var w = window.innerWidth / 3 - 50;
+			var w = (window.innerWidth - headerWidth ) / 3 - 15;
 			var h = window.innerHeight / urls.length - 30;
 			
 			var options = {
@@ -227,7 +227,7 @@
 			var row 	 = table.rows[index];			
 			var cells    = row.getElementsByTagName("td");
 			var dataText = cells[m+1].getElementsByTagName("div")[0]; 
-
+			updateMinerStats(index, jsonData);
 			var minerCharts = charts[index];
 			var chart;
 			if(minerCharts.length <= m){
@@ -275,6 +275,22 @@
 		cell3.innerHTML = "<td><div className=\"Fan speed\"	  style=\"border: 1px solid #ccc\"></div></td>";
 	}
 			
+	var headerWidth = 300;
+	function updateMinerStats(rowindex, jsonData){
+		var table = document.getElementById("MinerStats");
+		var row = table.rows[rowindex];
+		row.cells[0].innerHTML = "<td><div style='width:" + headerWidth + "px;'>Miner: " + urls[rowindex] + 
+								"<br>Total Hash Rate: " + jsonData.total_hash_rate +
+								"<br>Total Avg Hash Rate: " + jsonData.total_hash_rate_avg +
+								"<br>Pool: " + jsonData.pool.server +
+								"<br>Status: " + jsonData.pool.status +
+								"<br>Online: " + jsonData.pool.online +
+								"<br>Offline: " + jsonData.pool.offline +
+								"<br>Reconnects: " + jsonData.pool.reconnects +
+								"<br>Connected: " + jsonData.pool.time_connected +
+								"<br>Disconnected: " + jsonData.pool.time_disconnected + 
+								"</div></td>";
+	} 
 	// Close the dropdown menu if the user clicks outside of it
 	window.onclick = function(event) {
 		if (!event.target.matches('.dropbtn')) {
