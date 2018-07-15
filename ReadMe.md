@@ -18,5 +18,7 @@ file:///d:/Path/cast-xmr-monitor.html?miner=miner1&miner=miner2&miner=miner3
 or
 file:///d:/Path/cast-xmr-monitor.html?miner=192.168.1.225&miner=192.168.1.102
 
-It supports specifying initial values for chart parameters (although the drop downs do not indicate these values, yet).
-file:///d:/Path/cast-xmr-monitor.html?interval=5000&points=200&miner=miner1&miner=miner2&miner=miner3
+It supports specifying initial values for chart parameters.  These are specified by the 0 based index of the item in the drop down
+file:///d:/Path/cast-xmr-monitor.html?interval=2&points=3&theme=1&miner=miner1&miner=miner2&miner=miner3
+
+Added a simple theme select for night view support
