@@ -89,6 +89,7 @@
 				
 		var params = location.search.substr(location.search.indexOf("?")+1);
 		var urls = new Array();
+		var charts = new Array();
 		var sname = "miner";
 		var numPoints = 10;
 		var minInterval = 5000;
@@ -96,6 +97,7 @@
 		params = params.split("&");
 		// split param and value into individual pieces
 		for (var i=0; i<params.length; i++) {
+			charts.push(new Array());
 			param = params[i].split("=");
 			if ( [param[0]] == sname ) { 
 				urls.push(param[1]); 
@@ -233,8 +235,15 @@
 			var cells    = row.getElementsByTagName("td");
 			var dataText = cells[m+1].getElementsByTagName("div")[0]; 
 
-      		var chart = new google.charts.Line(dataText);
-			
+			var minerCharts = charts[index];
+			var chart;
+			if(minerCharts.length <= m){
+				chart = new google.charts.Line(dataText);
+				minerCharts.push(chart);
+			} else {
+			   chart = minerCharts[m];
+			}
+						
 			chart.draw(dataTable, google.charts.Line.convertOptions(options));
 		}
 	  }
