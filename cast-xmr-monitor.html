@@ -280,12 +280,12 @@
 		var table = document.getElementById("MinerStats");
 		var row = table.rows[rowindex];
 		row.cells[0].innerHTML = "<td><div style='width:" + headerWidth + "px;'>Miner: " + urls[rowindex] + 
-								"<br>Total Hash Rate: " + jsonData.total_hash_rate +
-								"<br>Total Avg Hash Rate: " + jsonData.total_hash_rate_avg +
+								"<br>Total Hash Rate: " + parseInt(jsonData.total_hash_rate).toLocaleString() +
+								"<br>Total Avg Hash Rate: " + parseInt(jsonData.total_hash_rate_avg).toLocaleString() +
 								"<br>Pool: " + jsonData.pool.server +
 								"<br>Status: " + jsonData.pool.status +
-								"<br>Online: " + jsonData.pool.online +
-								"<br>Offline: " + jsonData.pool.offline +
+								"<br>Online: " + parseInt(jsonData.pool.online).toLocaleString() +
+								"<br>Offline: " + parseInt(jsonData.pool.offline).toLocaleString() +
 								"<br>Reconnects: " + jsonData.pool.reconnects +
 								"<br>Connected: " + jsonData.pool.time_connected +
 								"<br>Disconnected: " + jsonData.pool.time_disconnected + 
