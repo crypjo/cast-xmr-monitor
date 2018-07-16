@@ -17,15 +17,14 @@ Drop down selection of polling interval, number of points to plot and theme
 
 Enable --remoteaccess for cast-xmr to enable JSON data retrieval
 
-To use:<br>
-Open local file in browser and pass mining rigs IPs or names
-<br>
+To use open local file in browser and pass mining rigs IPs or names
+<br><br>
 &nbsp;&nbsp;file:///d:/Path/cast-xmr-monitor.html?miner=miner1&miner=miner2&miner=miner3
-<br>
+<br><br>
 &nbsp;&nbsp;file:///d:/Path/cast-xmr-monitor.html?miner=192.168.1.225&miner=192.168.1.102
-<br>
-It supports specifying initial values for chart parameters.  These are specified by the 0 based index of the item in the drop down
+<br><br>
+Supports specifying initial values for chart parameters.  These are specified by the 0 based index of the item in the drop down
 <br><br>
 &nbsp;&nbsp;file:///d:/Path/cast-xmr-monitor.html?interval=2&points=3&theme=1&miner=miner1&miner=miner2&miner=miner3
-<br>
+<br><br>
 Added a simple theme select for night view support
