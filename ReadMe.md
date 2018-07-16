@@ -6,10 +6,11 @@ Pulls JSON data from mining rigs specified as HTTP request parameters
 
 Plots Hashrate, Temperature, Fan speed
 Drop down selection of polling interval and number of points to plot
-
+<p align="center">
 <img src="https://github.com/crypjo/cast-xmr-monitor/blob/master/img/cast-xmr-monitor-theme-dark.png" width="600">
 
 <img src="https://github.com/crypjo/cast-xmr-monitor/blob/master/img/cast-xmr-monitor-theme-light.png" width="600">
+</p>
 
 Enable --remoteaccess for cast-xmr to enable JSON data retrieval
 

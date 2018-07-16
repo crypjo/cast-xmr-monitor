@@ -121,14 +121,12 @@
 	}
 
 	function updateCharts(){
-		console.log("updateCharts");
 		for(var i = 0; i < urls.length; i++){
 			updateChart(i);
 		}
 	}
 
 	function updateChart(index){
-		console.log("updateChart " + index);
 		var url = 'http://' +  urls[index] + ':7777/';
 		var jsonData = getJSON(url, index, errorData);
 	}
@@ -138,7 +136,6 @@
 		xhr.open('GET', url, true);
 		xhr.responseType = 'json';
 		xhr.onload = function() {
-			console.log("getJSON onLoad " + url + " " + index);
 		  var status = xhr.status;
 		  if (status === 200) {
 			callback(null, index, xhr.response);
@@ -185,7 +182,6 @@
 					break;
 				 case 1:
 					val = row.gpu_temperature;
-					console.log("Index:" + index + " GPU:" + gpu + " Time:"+ time + " Temp:" + val);
 					break;
 				 case 2:
 					val = row.gpu_fan_rpm;
@@ -201,23 +197,31 @@
 			dataTable.sort([{column: 0}]);
 			
 			var w = (window.innerWidth - headerWidth ) / 3 - 15;
-			var h = window.innerHeight / urls.length - 30;
+			var h = window.innerHeight / urls.length - 20;
 			
 			var options = {
+				width: w,
+				height: h,
+				curveType: 'function',
 				chart: {
 					title: metrics[m]
 				},
-				bars: 'vertical',
-				width: w,
-				height: h,
 				chartArea: {
-					left:10,top:10,'width': '90%', 'height': '80%',
+					width: '60%', height: '100%',
 					backgroundColor: {
 					  fill: (theme == 'Dark') ? 'black' : 'white',
 					  fillOpacity: 0.1
 					},
 				},
-				// Colors the entire chart area, with opacity
+				legend: {
+					position: 'right', 
+					textStyle: {
+						fontSize: 10
+					},
+				},
+				hAxis:{				
+					viewWindowMode: 'maximized'
+				},
 				backgroundColor: {
   				    fill: (theme == 'Dark') ? 'black' : 'white',
 					fillOpacity: 0.8
@@ -336,7 +340,6 @@
 	   }
 	   clearInterval(interval);
 	   interval = setInterval(updateCharts, chartInterval);
-       console.log("setChartInterval(" + chartInterval + ")");		
 	}
 
 	function setNumPoints(selector) {
@@ -359,7 +362,6 @@
  			numPoints = 200;
 		    break;
 		}		
-		console.log("setNumPoints(" + numPoints + ")");		
 	}
 
 	function setTheme(selector) {
