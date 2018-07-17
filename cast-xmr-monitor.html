@@ -41,6 +41,66 @@
 		.w3-hover-theme:hover {color:#fff !important; background-color:#607d8b !important}
 		.w3-hover-text-theme:hover {color:#607d8b !important}
 		.w3-hover-border-theme:hover {border-color:#607d8b !important}	
+		
+				
+		/* The switch - the box around the slider */
+		.switch {
+		  position: relative;
+		  display: inline-block;
+		  width: 60px;
+		  height: 34px;
+		}
+
+		/* Hide default HTML checkbox */
+		.switch input {display:none;}
+
+		/* The slider */
+		.slider {
+		  position: absolute;
+		  cursor: pointer;
+		  top: 0;
+		  left: 0;
+		  right: 0;
+		  bottom: 0;
+		  background-color: #000;
+		  -webkit-transition: .4s;
+		  transition: .4s;
+		}
+
+		.slider:before {
+		  position: absolute;
+		  content: "";
+		  height: 26px;
+		  width: 26px;
+		  left: 4px;
+		  bottom: 4px;
+		  background-color: white;
+		  -webkit-transition: .4s;
+		  transition: .4s;
+		}
+
+		input:checked + .slider {
+		  background-color: #607d8b;
+		}
+
+		input:focus + .slider {
+		  box-shadow: 0 0 1px #2196F3;
+		}
+
+		input:checked + .slider:before {
+		  -webkit-transform: translateX(26px);
+		  -ms-transform: translateX(26px);
+		  transform: translateX(26px);
+		}
+
+		/* Rounded sliders */
+		.slider.round {
+		  border-radius: 34px;
+		}
+
+		.slider.round:before {
+		  border-radius: 50%;
+		}		
 	</style>
 	
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -87,6 +147,9 @@
 				var element = document.getElementById("theme-select");
 				element.value = index;					
 				setTheme(element);
+			}
+			if ( [param[0]] == 'fitToPage' ) { 
+				document.getElementById('fitToPage').checked = param[1] == 'true';
 			}
 		}
 		if(urls.length < 1) {
@@ -196,8 +259,9 @@
 			
 			dataTable.sort([{column: 0}]);
 			
-			var w = (window.innerWidth - headerWidth ) / 3 - 15;
-			var h = window.innerHeight / urls.length - 20;
+			var w = (window.innerWidth - headerWidth ) / 3 - 18;
+			var fitToPage = document.getElementById('fitToPage').checked;
+			var h = fitToPage ? window.innerHeight / urls.length - 27 : 300;
 			
 			var options = {
 				width: w,
@@ -207,7 +271,7 @@
 					title: metrics[m]
 				},
 				chartArea: {
-					width: '60%', height: '100%',
+					width: '80%', height: '100%',
 					backgroundColor: {
 					  fill: (theme == 'Dark') ? 'black' : 'white',
 					  fillOpacity: 0.1
@@ -408,6 +472,16 @@
 						<option value="0">Light</option>
 						<option value="1">Dark</option>
 					  </select>			
+				</div></td>	
+				<!-- Rounded switch -->
+				<td><div>
+					<label style="display: table-cell;">Fit to page</label>
+				</div></td>	
+				<td><div style="width:200px;">
+					<label class="switch">
+						<input id="fitToPage" type="checkbox">
+						<span class="slider round"></span>
+					</label>
 				</div></td>	
 			</tr>
 		</table>

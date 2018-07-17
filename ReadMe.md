@@ -25,6 +25,16 @@ To use open local file in browser and pass mining rigs IPs or names
 <br><br>
 Supports specifying initial values for chart parameters.  These are specified by the 0 based index of the item in the drop down
 <br><br>
-&nbsp;&nbsp;file:///d:/Path/cast-xmr-monitor.html?interval=2&points=3&theme=1&miner=miner1&miner=miner2&miner=miner3
+&nbsp;&nbsp;file:///d:/Path/cast-xmr-monitor.html?interval=2&points=3&theme=1&fitToPage=true&miner=miner1&miner=miner2&miner=miner3
 <br><br>
-Added a simple theme select for night view support
+Parameters Supported:
+<ul>
+<li>miner - IP or machine name</li>
+<li>interval - 0 based index</li>
+<li>points - 0 based index</li>
+<li>theme - 0 based index</li>
+<li>fitToPage - true or false</li>
+</ul>
+<br>
+Added theme select for night view support
+Added Fit to Page option to enable scrolling for large number of miners
