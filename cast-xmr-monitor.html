@@ -101,6 +101,29 @@
 		.slider.round:before {
 		  border-radius: 50%;
 		}		
+		
+		#brand_div{ 
+			background: url(https://gph.is/2ynLNSF) no-repeat center center fixed;
+		}
+		html { 
+		  background: url(https://gph.is/2ynLNSF) no-repeat center center fixed; 
+		  -webkit-background-size: cover;
+		  -moz-background-size: cover;
+		  -o-background-size: cover;
+		  background-size: cover;
+		  height: 100%;
+		}
+		body {
+			height: 100%;
+		}
+
+		h1 {
+			font-family: 'Spirax', cursive;
+			font-size: 1.8em;
+			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+			filter: alpha(opacity=20);
+			opacity: 0.2;
+		}		
 	</style>
 	
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -119,7 +142,7 @@
 
 	var interval;
 	var metrics = ["Hashrate", "Temperature", "Fan speed"];
-	
+	var resultCount	= 0;
 	function initParams(){
 		var params = location.search.substr(location.search.indexOf("?")+1);
 		params = params.split("&");
@@ -183,7 +206,10 @@
 		}
 	}
 
+	var totalHashrate = 0;
 	function updateCharts(){
+		totalHashrate = 0;
+		resultCount = 0;
 		for(var i = 0; i < urls.length; i++){
 			updateChart(i);
 		}
@@ -210,11 +236,15 @@
 	};	
 
 	function errorData(err, index, data) {
-	  if (err !== null) {
-		alert('HTTP request failed: ' + err);
-	  } else {
-		convertData(index, data);
-	  }
+		if (err !== null) {
+			alert('HTTP request failed: ' + err);
+		} else {
+			convertData(index, data);
+		}
+		if(resultCount == urls.length){
+			var totalDiv = document.getElementById("totalHashrateDiv");
+			totalDiv.innerHTML = "<span>Total Hashrate: " + parseInt(totalHashrate).toLocaleString() + "</span>";
+		}
 	}
 			   
 	function convertData(index, jsonData) {	
@@ -223,7 +253,6 @@
 		time.push(date.getHours() + (date.getTimezoneOffset() / 60));
 		time.push(date.getMinutes());
 		time.push(date.getSeconds());
-		
 		for(var m = 0; m < metrics.length; m++) {		
 			dataTable = dataTables[index][m];
 			// add each row from json
@@ -295,17 +324,22 @@
 			var row 	 = table.rows[index];			
 			var cells    = row.getElementsByTagName("td");
 			var dataText = cells[m+1].getElementsByTagName("div")[0]; 
-			updateMinerStats(index, jsonData);
 			var minerCharts = charts[index];
 			var chart;
 			if(minerCharts.length <= m){
 				chart = new google.charts.Line(dataText);
+				/*
+				var cli = chart.getChartLayoutInterface();
+				var boundingBox = cli.getChartAreaBoundingBox(); 
+				$('#brand_div').css('background-position', boundingBox.left + "px " + boundingBox.top + "px").css('background-size', boundingBox.width + "px " + boundingBox.height + "px");
+				*/
 				minerCharts.push(chart);
 			} else {
 			    chart = minerCharts[m];
 			}
 			chart.draw(dataTable, google.charts.Line.convertOptions(options));
 		}
+		updateMinerStats(index, jsonData);
 	}
 
 	function trimTail(dataTable, fixedSize){
@@ -347,9 +381,12 @@
 	function updateMinerStats(rowindex, jsonData){
 		var table = document.getElementById("MinerStats");
 		var row = table.rows[rowindex];
-		row.cells[0].innerHTML = "<td><div style='width:" + headerWidth + "px;'>Miner: " + urls[rowindex] + 
-								"<br>Total Hash Rate: " + parseInt(jsonData.total_hash_rate).toLocaleString() +
-								"<br>Total Avg Hash Rate: " + parseInt(jsonData.total_hash_rate_avg).toLocaleString() +
+		var now = new Date();		
+		var dateStr = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate() + " " + 
+						now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+						row.cells[0].innerHTML = "<td><div style='width:" + headerWidth + "px;'>Miner: " + urls[rowindex] + 
+								"<br>Total Hashrate: " + parseInt(jsonData.total_hash_rate).toLocaleString() +
+								"<br>Total Avg Hashrate: " + parseInt(jsonData.total_hash_rate_avg).toLocaleString() +
 								"<br>Pool: " + jsonData.pool.server +
 								"<br>Status: " + jsonData.pool.status +
 								"<br>Online: " + parseInt(jsonData.pool.online).toLocaleString() +
@@ -357,7 +394,10 @@
 								"<br>Reconnects: " + jsonData.pool.reconnects +
 								"<br>Connected: " + jsonData.pool.time_connected +
 								"<br>Disconnected: " + jsonData.pool.time_disconnected + 
+								"<br>Last Refresh: " + dateStr +
 								"</div></td>";
+		resultCount++;
+		totalHashrate += jsonData.total_hash_rate;
 	} 
 	// Close the dropdown menu if the user clicks outside of it
 	window.onclick = function(event) {
@@ -488,6 +528,12 @@
 	</div>	
     <table id="MinerStats" class="columns">
     </table>
-	<div style="text-align:center">Cast XMR Monitor v0.3 &nbsp;&nbsp; Copyright &copy; 2018 Crypjo</div>
+	<table id="Options" class="columns">
+		<tr>
+			<td><div id = "totalHashrateDiv" style="width:300px;"></div></td>
+			<td><div id = "versionDiv" style="width:300px;">Cast XMR Monitor v0.4</div></td>
+			<td><div id = "copyrightDiv" style="width:300px;">Copyright &copy; 2018 Crypjo</div></td>
+		</tr>
+    </table>
   </body>	
  </html>

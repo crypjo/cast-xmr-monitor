@@ -37,4 +37,5 @@ Parameters Supported:
 </ul>
 <br>
 Added theme select for night view support
+<br>
 Added Fit to Page option to enable scrolling for large number of miners
