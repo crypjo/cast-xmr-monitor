@@ -39,3 +39,9 @@ Parameters Supported:
 Added theme select for night view support
 <br>
 Added Fit to Page option to enable scrolling for large number of miners
+
+v0.4 
+<ul>
+<li>Fixed multiple refresh of miner stats</li> 
+<li>Added Total hashrate for all miners</li> 
+</ul>
